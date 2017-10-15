@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Models;
@@ -9,27 +10,27 @@ namespace Api.Controllers
     {
         public Task<IEnumerable<CustomValue>> GetAllValues()
         {
-            throw new System.NotImplementedException();
+            return Task.FromResult(new List<CustomValue>().AsEnumerable());
         }
         
-        public Task<IEnumerable<CustomValue>> GetValue(string id)
+        public Task<CustomValue> GetValue(string id)
         {
-            throw new System.NotImplementedException();
+            return Task.FromResult(new CustomValue());
         }
 
         public Task CreateValue(CustomValue value)
         {
-            throw new System.NotImplementedException();
+            return Task.FromResult(Ok());
         }
 
-        public Task UpdateValue(CustomValue value)
+        public Task UpdateValue(string id, CustomValue value)
         {
-            throw new System.NotImplementedException();
+            return Task.FromResult(Ok());
         }
 
         public Task DeleteValue(string id)
         {
-            throw new System.NotImplementedException();
+            return Task.FromResult(Ok());
         }
     }
 }

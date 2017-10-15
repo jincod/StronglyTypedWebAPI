@@ -24,9 +24,10 @@ namespace Api.Conventions
 
             foreach (var selector in action.Selectors)
             {
-                var path = refitAttr.Path.StartsWith(action.Controller.ControllerName, true, CultureInfo.InvariantCulture)
-                    ? refitAttr.Path.Substring(action.Controller.ControllerName.Length)
-                    : refitAttr.Path;
+                var path = refitAttr.Path.Substring(1);
+
+                if (path.StartsWith(action.Controller.ControllerName, true, CultureInfo.InvariantCulture))
+                    path = path.Substring(action.Controller.ControllerName.Length);
 
                 if (path.StartsWith("/"))
                     path = path.Substring(1);
