@@ -6,7 +6,7 @@ using Models;
 
 namespace Api.Controllers
 {
-    public class ValueController : Controller, IValueServiceApi
+    public class ValueController : Controller, IValueServiceRefitApi
     {
         public Task<IEnumerable<CustomValue>> GetAllValues()
         {

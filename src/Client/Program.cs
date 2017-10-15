@@ -8,7 +8,7 @@ namespace Client
     {
         private static void Main(string[] args)
         {
-            var valueServiceApi = RestService.For<IValueServiceApi>("http://localhost:5000/api");
+            var valueServiceApi = RestService.For<IValueServiceRefitApi>("http://localhost:5000/api");
 
             Task.Run(async () =>
             {

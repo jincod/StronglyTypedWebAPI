@@ -4,8 +4,7 @@ using Refit;
 
 namespace Models
 {
-    [RefitInterface]
-    public interface IValueServiceApi
+    public interface IValueServiceRefitApi
     {
         [Get("/value")]
         Task<IEnumerable<CustomValue>> GetAllValues();

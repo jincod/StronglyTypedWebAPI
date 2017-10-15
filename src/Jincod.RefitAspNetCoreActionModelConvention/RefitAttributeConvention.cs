@@ -1,22 +1,19 @@
 using System;
 using System.Globalization;
 using System.Linq;
-using System.Reflection;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ApplicationModels;
 using Microsoft.AspNetCore.Mvc.Internal;
-using Models;
 using Refit;
 
-namespace Api.Conventions
+namespace Jincod.RefitAspNetCoreActionModelConvention
 {
     public class RefitAttributeConvention : IActionModelConvention
     {
         public void Apply(ActionModel action)
         {
-            var refitAttributeType = typeof(RefitInterfaceAttribute);
             var type = action.Controller.ControllerType.ImplementedInterfaces
-                .FirstOrDefault(x => x.CustomAttributes.Any(a => a.AttributeType == refitAttributeType));
+                .FirstOrDefault(x => x.Name.Contains("RefitApi"));
 
             if (type == null)
                 return;
