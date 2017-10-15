@@ -21,27 +21,52 @@ namespace Api.Conventions
             if (type == null)
                 return;
 
-            MethodInfo mInfo = type.GetMethods().FirstOrDefault(x => x.Name == action.ActionName);
+            var mInfo = type.GetMethods().FirstOrDefault(x => x.Name == action.ActionName);
 
-            HttpMethodAttribute refitAttr =
-                (HttpMethodAttribute)Attribute.GetCustomAttributes(mInfo)
-                    .First(x => x is HttpMethodAttribute);
+            var refitAttr = (HttpMethodAttribute)Attribute.GetCustomAttributes(mInfo)
+                .First(x => x is HttpMethodAttribute);
 
-            foreach (var selector in action.Selectors)
+            var httpMethodActionConstraint = new HttpMethodActionConstraint(new[]
             {
-                var path = refitAttr.Path.Substring(1);
+                refitAttr.Method.Method
+            });
 
-                if (path.StartsWith(action.Controller.ControllerName, true, CultureInfo.InvariantCulture))
-                    path = path.Substring(action.Controller.ControllerName.Length);
+            var attributeRouteModel = GetAttributeRouteModel(refitAttr.Path, action.Controller.ControllerName);
 
-                if (path.StartsWith("/"))
-                    path = path.Substring(1);
+            if (action.Selectors.Count == 1 && action.Selectors.First().AttributeRouteModel == null)
+            {
+                var selector = action.Selectors.First();
 
-                if (!string.IsNullOrEmpty(path))
-                    selector.AttributeRouteModel = new AttributeRouteModel(new RouteAttribute(path));
+                if (!string.IsNullOrEmpty(attributeRouteModel.Template))
+                    selector.AttributeRouteModel = attributeRouteModel;
 
-                selector.ActionConstraints.Add(new HttpMethodActionConstraint(new[] { refitAttr.Method.Method }));
+                selector.ActionConstraints.Add(httpMethodActionConstraint);
             }
+            else
+            {
+                var selectorModel = new SelectorModel
+                {
+                    ActionConstraints = { httpMethodActionConstraint }
+                };
+
+                if (!string.IsNullOrEmpty(attributeRouteModel.Template))
+                    selectorModel.AttributeRouteModel = attributeRouteModel;
+
+                action.Selectors.Add(selectorModel);
+            }
+        }
+
+        private static AttributeRouteModel GetAttributeRouteModel(string refitAttrPath, string controllerControllerName)
+        {
+            var path = refitAttrPath.Substring(1);
+
+            if (path.StartsWith(controllerControllerName, true, CultureInfo.InvariantCulture))
+                path = path.Substring(controllerControllerName.Length);
+
+            if (path.StartsWith("/"))
+                path = path.Substring(1);
+
+            return new AttributeRouteModel(new RouteAttribute(path));
         }
     }
 }

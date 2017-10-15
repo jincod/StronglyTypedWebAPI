@@ -13,6 +13,7 @@ namespace Api.Controllers
             return Task.FromResult(new List<CustomValue>().AsEnumerable());
         }
         
+        [HttpGet("/custom")]
         public Task<CustomValue> GetValue(string id)
         {
             return Task.FromResult(new CustomValue());
