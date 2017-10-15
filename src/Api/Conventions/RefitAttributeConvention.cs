@@ -5,6 +5,7 @@ using System.Reflection;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ApplicationModels;
 using Microsoft.AspNetCore.Mvc.Internal;
+using Models;
 using Refit;
 
 namespace Api.Conventions
@@ -13,10 +14,14 @@ namespace Api.Conventions
     {
         public void Apply(ActionModel action)
         {
-            // TODO
-            var type = action.Controller.ControllerType.ImplementedInterfaces.Last();
+            var refitAttributeType = typeof(RefitInterfaceAttribute);
+            var type = action.Controller.ControllerType.ImplementedInterfaces
+                .FirstOrDefault(x => x.CustomAttributes.Any(a => a.AttributeType == refitAttributeType));
 
-            MethodInfo mInfo = type.GetMethods().First(x => x.Name == action.ActionName);
+            if (type == null)
+                return;
+
+            MethodInfo mInfo = type.GetMethods().FirstOrDefault(x => x.Name == action.ActionName);
 
             HttpMethodAttribute refitAttr =
                 (HttpMethodAttribute)Attribute.GetCustomAttributes(mInfo)

@@ -4,6 +4,7 @@ using Refit;
 
 namespace Models
 {
+    [RefitInterface]
     public interface IValueServiceApi
     {
         [Get("/value")]
