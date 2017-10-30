@@ -15,7 +15,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Models\Models.csproj" />
-    <ProjectReference Include="..\Jincod.RefitAspNetCoreActionModelConvention\Jincod.RefitAspNetCoreActionModelConvention.csproj" />
+    <ProjectReference Include="..\Jincod.AspNetCore.ActionModelConvention.Refit\Jincod.AspNetCore.ActionModelConvention.Refit.csproj" />
   </ItemGroup>
 
 </Project>

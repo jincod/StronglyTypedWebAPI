@@ -10,7 +10,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Models", "src\Models\Models
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Client", "src\Client\Client.csproj", "{3F253CCF-BA01-45CC-A1F9-AB53AF79D294}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Jincod.RefitAspNetCoreActionModelConvention", "src\Jincod.RefitAspNetCoreActionModelConvention\Jincod.RefitAspNetCoreActionModelConvention.csproj", "{51B95D9E-92AF-4F41-8E13-CB4833BC4977}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Jincod.AspNetCore.ActionModelConvention.Refit", "src\Jincod.AspNetCore.ActionModelConvention.Refit\Jincod.AspNetCore.ActionModelConvention.Refit.csproj", "{51B95D9E-92AF-4F41-8E13-CB4833BC4977}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

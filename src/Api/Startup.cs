@@ -1,5 +1,5 @@
 using Api.Conventions;
-using Jincod.RefitAspNetCoreActionModelConvention;
+using Jincod.AspNetCore.ActionModelConvention.Refit;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;

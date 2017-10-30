@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc.ApplicationModels;
 using Microsoft.AspNetCore.Mvc.Internal;
 using Refit;
 
-namespace Jincod.RefitAspNetCoreActionModelConvention
+namespace Jincod.AspNetCore.ActionModelConvention.Refit
 {
     public class RefitAttributeConvention : IActionModelConvention
     {
