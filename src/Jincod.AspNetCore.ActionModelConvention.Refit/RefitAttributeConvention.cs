@@ -12,44 +12,46 @@ namespace Jincod.AspNetCore.ActionModelConvention.Refit
     {
         public void Apply(ActionModel action)
         {
-            var type = action.Controller.ControllerType.ImplementedInterfaces
-                .FirstOrDefault(x => x.Name.Contains("RefitApi"));
+            var types = action.Controller.ControllerType.ImplementedInterfaces;
 
-            if (type == null)
-                return;
-
-            var mInfo = type.GetMethods().FirstOrDefault(x => x.Name == action.ActionName);
-
-            var refitAttr = (HttpMethodAttribute)Attribute.GetCustomAttributes(mInfo)
-                .First(x => x is HttpMethodAttribute);
-
-            var httpMethodActionConstraint = new HttpMethodActionConstraint(new[]
+            foreach (var type in types)
             {
-                refitAttr.Method.Method
-            });
+                var mInfo = type.GetMethods()
+                    .SingleOrDefault(x => x.Name == action.ActionName);
 
-            var attributeRouteModel = GetAttributeRouteModel(refitAttr.Path, action.Controller.ControllerName);
+                if (mInfo == null) continue;
 
-            if (action.Selectors.Count == 1 && action.Selectors.First().AttributeRouteModel == null)
-            {
-                var selector = action.Selectors.First();
+                var refitAttr = (HttpMethodAttribute) Attribute.GetCustomAttributes(mInfo)
+                    .Single(x => x is HttpMethodAttribute);
 
-                if (!string.IsNullOrEmpty(attributeRouteModel.Template))
-                    selector.AttributeRouteModel = attributeRouteModel;
-
-                selector.ActionConstraints.Add(httpMethodActionConstraint);
-            }
-            else
-            {
-                var selectorModel = new SelectorModel
+                var httpMethodActionConstraint = new HttpMethodActionConstraint(new[]
                 {
-                    ActionConstraints = { httpMethodActionConstraint }
-                };
+                    refitAttr.Method.Method
+                });
 
-                if (!string.IsNullOrEmpty(attributeRouteModel.Template))
-                    selectorModel.AttributeRouteModel = attributeRouteModel;
+                var attributeRouteModel = GetAttributeRouteModel(refitAttr.Path, action.Controller.ControllerName);
 
-                action.Selectors.Add(selectorModel);
+                if (action.Selectors.Count == 1 && action.Selectors.First().AttributeRouteModel == null)
+                {
+                    var selector = action.Selectors.First();
+
+                    if (!string.IsNullOrEmpty(attributeRouteModel.Template))
+                        selector.AttributeRouteModel = attributeRouteModel;
+
+                    selector.ActionConstraints.Add(httpMethodActionConstraint);
+                }
+                else
+                {
+                    var selectorModel = new SelectorModel
+                    {
+                        ActionConstraints = {httpMethodActionConstraint}
+                    };
+
+                    if (!string.IsNullOrEmpty(attributeRouteModel.Template))
+                        selectorModel.AttributeRouteModel = attributeRouteModel;
+
+                    action.Selectors.Add(selectorModel);
+                }
             }
         }
 
