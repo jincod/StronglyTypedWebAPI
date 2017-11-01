@@ -1,4 +1,3 @@
-using Api.Conventions;
 using Jincod.AspNetCore.ActionModelConvention.Refit;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -12,8 +11,7 @@ namespace Api
         {
             services.AddMvc(mvc =>
             {
-                mvc.Conventions.Add(new DefaultRoutePrefixConvention());
-                mvc.Conventions.Add(new RefitAttributeConvention());
+                mvc.Conventions.Add(new RefitAttributeConvention("/api"));
             });
         }
 

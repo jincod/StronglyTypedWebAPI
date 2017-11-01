@@ -10,6 +10,13 @@ namespace Jincod.AspNetCore.ActionModelConvention.Refit
 {
     public class RefitAttributeConvention : IActionModelConvention
     {
+        private readonly string _routePrefix;
+
+        public RefitAttributeConvention(string routePrefix = "")
+        {
+            _routePrefix = routePrefix;
+        }
+
         public void Apply(ActionModel action)
         {
             var types = action.Controller.ControllerType.ImplementedInterfaces;
@@ -29,7 +36,7 @@ namespace Jincod.AspNetCore.ActionModelConvention.Refit
                     refitAttr.Method.Method
                 });
 
-                var attributeRouteModel = GetAttributeRouteModel(refitAttr.Path, action.Controller.ControllerName);
+                var attributeRouteModel = new AttributeRouteModel(new RouteAttribute($"{_routePrefix}{refitAttr.Path}"));
 
                 if (action.Selectors.Count == 1 && action.Selectors.First().AttributeRouteModel == null)
                 {
@@ -53,19 +60,6 @@ namespace Jincod.AspNetCore.ActionModelConvention.Refit
                     action.Selectors.Add(selectorModel);
                 }
             }
-        }
-
-        private static AttributeRouteModel GetAttributeRouteModel(string refitAttrPath, string controllerControllerName)
-        {
-            var path = refitAttrPath.Substring(1);
-
-            if (path.StartsWith(controllerControllerName, true, CultureInfo.InvariantCulture))
-                path = path.Substring(controllerControllerName.Length);
-
-            if (path.StartsWith("/"))
-                path = path.Substring(1);
-
-            return new AttributeRouteModel(new RouteAttribute(path));
         }
     }
 }
