@@ -1,6 +1,6 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ApplicationModels;
 using Microsoft.AspNetCore.Mvc.Internal;
@@ -19,9 +19,7 @@ namespace Jincod.AspNetCore.ActionModelConvention.Refit
 
         public void Apply(ActionModel action)
         {
-            var refitAttrs = action.ActionMethod.DeclaringType
-                .GetInterfaces()
-                .SelectMany(t => GetCustomAttributes(action, t));
+            var refitAttrs = GetRefitAttributes(action.ActionMethod);
 
             foreach (var refitAttr in refitAttrs)
             {
@@ -57,18 +55,22 @@ namespace Jincod.AspNetCore.ActionModelConvention.Refit
             }
         }
 
-        private IEnumerable<HttpMethodAttribute> GetCustomAttributes(ActionModel action, Type implementedInterface)
+        private IEnumerable<HttpMethodAttribute> GetRefitAttributes(MethodInfo action)
         {
-            var map = action.ActionMethod.DeclaringType
-                .GetInterfaceMap(implementedInterface);
+            IEnumerable<HttpMethodAttribute> GetCustomAttribute(MethodInfo methodInfo) =>
+                methodInfo.GetCustomAttributes(typeof(HttpMethodAttribute), true)
+                    .Cast<HttpMethodAttribute>();
 
-            var index = Array.IndexOf(map.TargetMethods, action.ActionMethod);
+            IEnumerable<HttpMethodAttribute> Map(InterfaceMapping mapping) => 
+                mapping.InterfaceMethods
+                    .Zip(mapping.TargetMethods, (im, tm) => (interfaceMethod: im, targetMethod: tm))
+                    .Where(x => x.targetMethod == action)
+                    .Select(x => x.interfaceMethod)
+                    .SelectMany(GetCustomAttribute);
 
-            if (index == -1)
-                return new HttpMethodAttribute[] { };
-
-            return map.InterfaceMethods[index].GetCustomAttributes(typeof(HttpMethodAttribute), true)
-                .Cast<HttpMethodAttribute>();
+            return action.DeclaringType.GetInterfaces()
+                .Select(interfaceType => action.DeclaringType.GetInterfaceMap(interfaceType))
+                .SelectMany(Map);
         }
     }
 }
