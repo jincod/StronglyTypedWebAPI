@@ -1,5 +1,5 @@
 using System;
-using System.Globalization;
+using System.Collections.Generic;
 using System.Linq;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ApplicationModels;
@@ -19,24 +19,19 @@ namespace Jincod.AspNetCore.ActionModelConvention.Refit
 
         public void Apply(ActionModel action)
         {
-            var types = action.Controller.ControllerType.ImplementedInterfaces;
+            var refitAttrs = action.ActionMethod.DeclaringType
+                .GetInterfaces()
+                .SelectMany(t => GetCustomAttributes(action, t));
 
-            foreach (var type in types)
+            foreach (var refitAttr in refitAttrs)
             {
-                var mInfo = type.GetMethods()
-                    .SingleOrDefault(x => x.Name == action.ActionName);
-
-                if (mInfo == null) continue;
-
-                var refitAttr = (HttpMethodAttribute) Attribute.GetCustomAttributes(mInfo)
-                    .Single(x => x is HttpMethodAttribute);
-
                 var httpMethodActionConstraint = new HttpMethodActionConstraint(new[]
                 {
                     refitAttr.Method.Method
                 });
 
-                var attributeRouteModel = new AttributeRouteModel(new RouteAttribute($"{_routePrefix}{refitAttr.Path}"));
+                var attributeRouteModel =
+                    new AttributeRouteModel(new RouteAttribute($"{_routePrefix}{refitAttr.Path}"));
 
                 if (action.Selectors.Count == 1 && action.Selectors.First().AttributeRouteModel == null)
                 {
@@ -60,6 +55,20 @@ namespace Jincod.AspNetCore.ActionModelConvention.Refit
                     action.Selectors.Add(selectorModel);
                 }
             }
+        }
+
+        private IEnumerable<HttpMethodAttribute> GetCustomAttributes(ActionModel action, Type implementedInterface)
+        {
+            var map = action.ActionMethod.DeclaringType
+                .GetInterfaceMap(implementedInterface);
+
+            var index = Array.IndexOf(map.TargetMethods, action.ActionMethod);
+
+            if (index == -1)
+                return new HttpMethodAttribute[] { };
+
+            return map.InterfaceMethods[index].GetCustomAttributes(typeof(HttpMethodAttribute), true)
+                .Cast<HttpMethodAttribute>();
         }
     }
 }
