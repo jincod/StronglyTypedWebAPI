@@ -57,7 +57,7 @@ namespace Jincod.AspNetCore.ActionModelConvention.Refit
 
         private IEnumerable<HttpMethodAttribute> GetRefitAttributes(MethodInfo action)
         {
-            IEnumerable<HttpMethodAttribute> GetCustomAttribute(MethodInfo methodInfo) =>
+            IEnumerable<HttpMethodAttribute> GetCustomAttributes(MethodInfo methodInfo) =>
                 methodInfo.GetCustomAttributes(typeof(HttpMethodAttribute), true)
                     .Cast<HttpMethodAttribute>();
 
@@ -66,7 +66,7 @@ namespace Jincod.AspNetCore.ActionModelConvention.Refit
                     .Zip(mapping.TargetMethods, (im, tm) => (interfaceMethod: im, targetMethod: tm))
                     .Where(x => x.targetMethod == action)
                     .Select(x => x.interfaceMethod)
-                    .SelectMany(GetCustomAttribute);
+                    .SelectMany(GetCustomAttributes);
 
             return action.DeclaringType.GetInterfaces()
                 .Select(interfaceType => action.DeclaringType.GetInterfaceMap(interfaceType))
